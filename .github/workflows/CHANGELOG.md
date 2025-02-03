@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.0.5 - 2025-02-03
+#### Continuous Integration
+- change permissions - (b98760a) - Angel Dijoux
+
+- - -
+
 ## v0.0.4 - 2025-02-03
 #### Continuous Integration
 - trigger when tags - (d34fa75) - Angel Dijoux
