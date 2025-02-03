@@ -1,0 +1,74 @@
+name: Release
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-latest, windows-latest]
+        arch: [x86_64, aarch64]
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu only)
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Add Rust target
+        run: rustup target add ${{ matrix.arch }}-unknown-linux-gnu
+
+      - name: Cache Rust dependencies
+        uses: swatinem/rust-cache@v2
+
+      - name: Extract version from Cargo.toml
+        id: metadata
+        run: |
+          VERSION=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[0].version')
+          echo "version=$VERSION" >> $GITHUB_ENV
+
+      - name: Build Project
+        run: cargo build --release --target=${{ matrix.arch }}-unknown-linux-gnu
+
+      - name: Archive binaries
+        run: |
+          mkdir -p artifacts
+          if [ "${{ matrix.platform }}" == "ubuntu-latest" ]; then
+            mv target/${{ matrix.arch }}-unknown-linux-gnu/release/* artifacts/
+          elif [ "${{ matrix.platform }}" == "macos-latest" ]; then
+            mv target/${{ matrix.arch }}-apple-darwin/release/* artifacts/
+          elif [ "${{ matrix.platform }}" == "windows-latest" ]; then
+            mv target/${{ matrix.arch }}-pc-windows-msvc/release/*.exe artifacts/
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-rust-app-${{ matrix.platform }}-${{ matrix.arch }}
+          path: artifacts/*
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Release ${{ github.ref_name }}"
+          body: "See the assets below to download this release."
+          draft: false
+          prerelease: false
+          files: artifacts/*
