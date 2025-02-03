@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.0.2 - 2025-02-03
+#### Continuous Integration
+- create - (1c8a3ab) - Angel Dijoux
+
+- - -
+
 ## v0.0.1 - 2025-02-03
 #### Features
 - load metrics json file instead of use the lib - (c0a04fa) - Angel Dijoux
