@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.0.3 - 2025-02-28
+#### Continuous Integration
+- suport more targets - (1f2dfb2) - Angel Dijoux
+
+- - -
+
 ## v0.0.2 - 2025-02-27
 #### Documentation
 - complete readme - (8051a00) - Angel Dijoux
